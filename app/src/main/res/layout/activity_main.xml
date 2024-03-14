@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@color/dark"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/simpleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/simple"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/white"
+        android:background="@color/red2" />
+
+    <Button
+        android:id="@+id/advancedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/advanced"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/white"
+        android:background="@color/red2" />
+
+    <Button
+        android:id="@+id/aboutButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/about"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/white"
+        android:background="@color/red2" />
+
+    <Button
+        android:id="@+id/exitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/exit"
+        android:background="@color/red2"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
+</LinearLayout>
