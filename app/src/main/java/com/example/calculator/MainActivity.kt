@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.calculator.ui.theme.CalculatorTheme
-import androidx.activity.compose.setContent
-import android.view.View;
 import android.content.Intent;
 
 class MainActivity : ComponentActivity() {
