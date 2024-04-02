@@ -21,6 +21,18 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(this,AboutActivity::class.java);
             startActivity(intent)
         }
+        val exitButton = findViewById<Button>(R.id.exitButton)
+
+        exitButton.setOnClickListener{view->
+            finish();
+            System.exit(0);
+        }
+
+        val standardCalculatorButton = findViewById<Button>(R.id.simpleButton)
+        standardCalculatorButton.setOnClickListener{view->
+            val intent = Intent(this,StandardCalculator::class.java);
+            startActivity(intent)
+        }
     }
 }
 

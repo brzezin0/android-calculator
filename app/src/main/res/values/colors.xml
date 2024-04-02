@@ -10,4 +10,7 @@
     <color name="red1">#FFA0153E</color>
     <color name="red2">#FFFF204E</color>
     <color name="white">#FFF0EDCF</color>
+    <color name="primary">#0E50D3</color>
+    <color name="secondary">#181819</color>
+    <color name="tertiary">#F2613F</color>
 </resources>
