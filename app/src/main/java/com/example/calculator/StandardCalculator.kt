@@ -3,6 +3,7 @@ package com.example.calculator
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -59,6 +60,8 @@ class StandardCalculator : AppCompatActivity() {
                     if (resultValue != "Err") {
                         result.text = resultValue
                         solution.text=resultValue
+                    }else{
+                        Toast.makeText(this, "Błędne wyrażenie, spróbuj jeszcze raz", Toast.LENGTH_SHORT).show()
                     }
                 }
                 else -> {

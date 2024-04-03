@@ -33,6 +33,13 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(this,StandardCalculator::class.java);
             startActivity(intent)
         }
+
+        val advancedCalculatorButton = findViewById<Button>(R.id.advancedButton)
+        advancedCalculatorButton.setOnClickListener{view->
+            val intent = Intent(this,AdvancedCalculator::class.java)
+            startActivity(intent)
+
+        }
     }
 }
 
