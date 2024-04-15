@@ -12,6 +12,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class AdvancedCalculator : AppCompatActivity() {
 
@@ -127,6 +130,13 @@ class AdvancedCalculator : AppCompatActivity() {
                         Toast.makeText(this, "Niepoprawne dane wejściowe dla cotangensa", Toast.LENGTH_SHORT).show()
                     }
                 }
+                "%" -> {
+                    if(solution.text.isNotEmpty() && solution.text.matches("-?\\d+(\\.\\d+)?".toRegex())){
+                        solution.text="${solution.text}"
+                    }else{
+                        Toast.makeText(this,"Niepoprawne wyrazenie", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
                 else -> {
                     if (solution.text.toString() == "0") {
@@ -146,12 +156,20 @@ class AdvancedCalculator : AppCompatActivity() {
             val context = Context.enter()
             context.optimizationLevel = -1
             val scriptable = context.initStandardObjects()
-            context.evaluateString(scriptable, data, "JavaScript", 1, null).toString()
+            val result = context.evaluateString(scriptable, data, "JavaScript", 1, null).toString()
+            BigDecimal(result).setScale(5, RoundingMode.HALF_UP).toString()
+            formatNumber(result)
+
         } catch (e: Exception) {
             "Err"
         } finally {
             Context.exit()
         }
+    }
+    fun formatNumber(number: String): String {
+        val decimal = BigDecimal(number).setScale(6, RoundingMode.HALF_UP)
+        val formatter = DecimalFormat("#.#####") // Formatowanie, które ucinają niepotrzebne zera
+        return formatter.format(decimal)
     }
 
 
