@@ -61,13 +61,9 @@ class AdvancedCalculator : AppCompatActivity() {
                     result.text = "0"
                 }
                 "√" -> {
-                    if(solution.text.isNotEmpty() && solution.text.matches("-?\\d+(\\.\\d+)?".toRegex())){
-                        solution.text = "Math.pow(${solution.text},2)"
-                    }else{
-                        Toast.makeText(this, "Błędne wyrażenie, spróbuj jeszcze raz", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                    solution.text = "Math.sqrt(${solution.text})"
 
+                }
                 "=" -> {
                     val expression = solution.text.toString()
                         .replace("sin", "Math.sin")
@@ -166,11 +162,40 @@ class AdvancedCalculator : AppCompatActivity() {
             Context.exit()
         }
     }
-    fun formatNumber(number: String): String {
-        val decimal = BigDecimal(number).setScale(6, RoundingMode.HALF_UP)
-        val formatter = DecimalFormat("#.#####") // Formatowanie, które ucinają niepotrzebne zera
-        return formatter.format(decimal)
+
+    private fun formatNumber(number: String): String {
+        return try {
+            val decimal = BigDecimal(number).setScale(6, RoundingMode.HALF_UP)
+            if (decimal.abs() >= BigDecimal("1e8") || decimal.abs() < BigDecimal("1e-6") && decimal.compareTo(BigDecimal.ZERO) != 0) {
+                val formatter = DecimalFormat("0.######E0")
+                formatter.format(decimal)
+            } else {
+                val formatter = DecimalFormat("#.######")
+                formatter.format(decimal)
+            }
+        } catch (e: NumberFormatException) {
+            "Err"
+        }
     }
 
+    private fun toggleLastNumberSign(expression: String): String {
+        if (expression.isEmpty()) return expression
+
+        val lastIndex = expression.lastIndex
+        var numStart = lastIndex
+        while (numStart >= 0 && (expression[numStart].isDigit() || expression[numStart] == '.' || expression[numStart] == '-')) {
+            if (expression[numStart] == '-' && (numStart == 0 || !expression[numStart - 1].isDigit())) {
+                break
+            }
+            numStart--
+        }
+
+        numStart++
+
+        val number = expression.substring(numStart, lastIndex + 1)
+        val newNumber = if (number.startsWith("-")) number.substring(1) else "-$number"
+
+        return expression.substring(0, numStart) + newNumber
+    }
 
 }
