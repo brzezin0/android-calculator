@@ -111,14 +111,15 @@ class AdvancedCalculator : AppCompatActivity() {
                     }
                 }
                 "^" -> {
-                    if (solution.text.isNotEmpty()) {
+                    if (solution.text.isNotEmpty() && !solution.text.endsWith("^")) {
                         isExponentiationPending = true
                         baseForExponentiation = solution.text.toString()
                         solution.text = "${solution.text}^"
                     } else {
-                        Toast.makeText(this, "Enter a base number first", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Enter a base number first or complete the exponentiation", Toast.LENGTH_SHORT).show()
                     }
                 }
+
 
                 "=" -> {
                     if (isExponentiationPending) {
@@ -257,10 +258,22 @@ class AdvancedCalculator : AppCompatActivity() {
 
                 else -> {
                     val currentText = solution.text.toString()
-                    if (buttonText == ".") {
+                    if (buttonText in listOf("+", "-", "*", "/")) {
+                        // Sprawdzenie, czy ostatni znak jest operatorem i czy jest taki sam jak wciśnięty przycisk, blokuje dodanie go jeszcze raz
+                        if (currentText.isNotEmpty() && listOf("+", "-", "*", "/").contains(currentText.last().toString())) {
+                            if (currentText.last().toString() == buttonText) {
+                                Toast.makeText(this, "You cannot enter two '$buttonText' in a row", Toast.LENGTH_SHORT).show()
+                            } else {
+                                // Usunięcie poprzedniego operatora, jeśli nowy zostanie wprowadzony (zamiana operatorów)
+                                solution.text = currentText.dropLast(1) + buttonText
+                            }
+                        } else {
+                            solution.text = "$currentText$buttonText"
+                        }
+                    } else if (buttonText == ".") {
                         if (currentText.isEmpty() || currentText.endsWith("(") || currentText.endsWith("+") || currentText.endsWith("-") || currentText.endsWith("*") || currentText.endsWith("/")) {
                             solution.text = "${currentText}0."
-                        } else if (!currentText.endsWith(".")) {
+                        } else if (!currentText.contains(".")) {
                             solution.text = "${currentText}."
                         }
                     } else {
@@ -275,6 +288,7 @@ class AdvancedCalculator : AppCompatActivity() {
                         }
                     }
                 }
+
 
             }
         }

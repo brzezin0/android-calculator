@@ -104,10 +104,21 @@ class StandardCalculator : AppCompatActivity() {
                 }
                 else -> {
                     val currentText = solution.text.toString()
-                    if (buttonText == ".") {
+                    if (buttonText in listOf("+", "-", "*", "/")) {
+                        if (currentText.isNotEmpty() && listOf("+", "-", "*", "/").contains(currentText.last().toString())) {
+                            if (currentText.last().toString() == buttonText) {
+                                Toast.makeText(this, "You cannot enter two '$buttonText' in a row", Toast.LENGTH_SHORT).show()
+                            } else {
+                                // Usunięcie poprzedniego operatora, jeśli nowy zostanie wprowadzony (zamiana operatorów)
+                                solution.text = currentText.dropLast(1) + buttonText
+                            }
+                        } else {
+                            solution.text = "$currentText$buttonText"
+                        }
+                    } else if (buttonText == ".") {
                         if (currentText.isEmpty() || currentText.endsWith("(") || currentText.endsWith("+") || currentText.endsWith("-") || currentText.endsWith("*") || currentText.endsWith("/")) {
                             solution.text = "${currentText}0."
-                        } else if (!currentText.endsWith(".")) {
+                        } else if (!currentText.contains(".")) {
                             solution.text = "${currentText}."
                         }
                     } else {
@@ -122,6 +133,7 @@ class StandardCalculator : AppCompatActivity() {
                         }
                     }
                 }
+
             }
         }
     }
