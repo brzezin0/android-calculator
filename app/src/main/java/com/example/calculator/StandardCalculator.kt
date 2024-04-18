@@ -17,7 +17,7 @@ class StandardCalculator : AppCompatActivity() {
     private lateinit var result: TextView
     private lateinit var solution: TextView
     private var lastClickTime: Long = 0
-
+    private val DOUBLE_CLICK_TIME_DELTA: Long = 600
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_standard_calculator)
@@ -58,7 +58,15 @@ class StandardCalculator : AppCompatActivity() {
 
             when (buttonText) {
                 "C" -> {
-                    solution.text = if (solution.text.isNotEmpty()) solution.text.substring(0, solution.text.length - 1) else "0"
+                    val clickTime = System.currentTimeMillis()
+                    if (clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA) {
+                        solution.text = "0"
+                        result.text = "0"
+                        Toast.makeText(this, "All cleared", Toast.LENGTH_SHORT).show()
+                    } else {
+                        solution.text = if (solution.text.isNotEmpty()) solution.text.substring(0, solution.length() - 1) else "0"
+                    }
+                    lastClickTime = clickTime
                 }
                 "AC" -> {
                     solution.text = "0"
