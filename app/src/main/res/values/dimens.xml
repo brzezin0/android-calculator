@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <dimen name="maxTextADV">24sp</dimen>
+        <dimen name="minTextADV">14sp</dimen>
+        <dimen name="minTextST">36sp</dimen>
+        <dimen name="maxTextST">48sp</dimen>
+</resources>

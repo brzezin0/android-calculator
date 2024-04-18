@@ -73,12 +73,20 @@ class StandardCalculator : AppCompatActivity() {
                     result.text = "0"
                 }
                 "√" -> {
-                    if (solution.text.isNotEmpty() && solution.text.matches("-?\\d+(\\.\\d+)?".toRegex())) {
-                        solution.text = "Math.pow(${solution.text},2)"
+                    if (solution.text.isNotEmpty()) {
+                        solution.text = "Math.sqrt(${solution.text})"
+                        val resultValue = getResult(solution.text.toString())
+                        if (resultValue != "Err") {
+                            result.text = resultValue
+                            solution.text = resultValue
+                        } else {
+                            Toast.makeText(this, "Invalid expression, try again", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
-                        Toast.makeText(this, "Błędne wyrażenie, spróbuj jeszcze raz", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Enter a number first", Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 "±" -> {
                     solution.text = toggleLastNumberSign(solution.text.toString())
                 }
@@ -95,13 +103,22 @@ class StandardCalculator : AppCompatActivity() {
                     }
                 }
                 else -> {
-                    if (solution.text.toString() == "0") {
-                        solution.text = buttonText
+                    val currentText = solution.text.toString()
+                    if (buttonText == ".") {
+                        if (currentText.isEmpty() || currentText.endsWith("(") || currentText.endsWith("+") || currentText.endsWith("-") || currentText.endsWith("*") || currentText.endsWith("/")) {
+                            solution.text = "${currentText}0."
+                        } else if (!currentText.endsWith(".")) {
+                            solution.text = "${currentText}."
+                        }
                     } else {
-                        if (solution.text.length < 25) {
-                            solution.text = "${solution.text}$buttonText"
+                        if (currentText == "0") {
+                            if (buttonText != "0") {
+                                solution.text = buttonText
+                            }
                         } else {
-                            Toast.makeText(this, "Limit znaków został osiągnięty", Toast.LENGTH_SHORT).show()
+                            if (result.text != "Err") {
+                                solution.text = "${currentText}$buttonText"
+                            }
                         }
                     }
                 }
@@ -143,20 +160,21 @@ class StandardCalculator : AppCompatActivity() {
     private fun toggleLastNumberSign(expression: String): String {
         if (expression.isEmpty()) return expression
 
-        val lastIndex = expression.lastIndex
-        var numStart = lastIndex
-        while (numStart >= 0 && (expression[numStart].isDigit() || expression[numStart] == '.' || expression[numStart] == '-')) {
-            if (expression[numStart] == '-' && (numStart == 0 || !expression[numStart - 1].isDigit())) {
-                break
-            }
-            numStart--
+        val regex = Regex("[-]?\\b\\d+\\.?\\d*\\)?$")
+        val matchResult = regex.find(expression)
+
+        matchResult ?: return expression
+
+        val number = matchResult.value
+        val numberStartIndex = matchResult.range.first
+        val numberEndIndex = matchResult.range.last
+
+        val newNumber = if (number.startsWith("-")) {
+            number.substring(1)
+        } else {
+            "-$number"
         }
 
-        numStart++
-
-        val number = expression.substring(numStart, lastIndex + 1)
-        val newNumber = if (number.startsWith("-")) number.substring(1) else "-$number"
-
-        return expression.substring(0, numStart) + newNumber
+        return expression.substring(0, numberStartIndex) + newNumber + expression.substring(numberEndIndex + 1)
     }
 }
