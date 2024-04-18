@@ -118,10 +118,14 @@ class StandardCalculator : AppCompatActivity() {
                     } else if (buttonText == ".") {
                         if (currentText.isEmpty() || currentText.endsWith("(") || currentText.endsWith("+") || currentText.endsWith("-") || currentText.endsWith("*") || currentText.endsWith("/")) {
                             solution.text = "${currentText}0."
-                        } else if (!currentText.contains(".")) {
-                            solution.text = "${currentText}."
+                        } else {
+                            val lastNumberSegment = currentText.split(Regex("[+\\-*/]")).last()
+                            if (!lastNumberSegment.contains(".")) {
+                                solution.text = "${currentText}."
+                            }
                         }
-                    } else {
+                    }
+                    else {
                         if (currentText == "0") {
                             if (buttonText != "0") {
                                 solution.text = buttonText
@@ -171,8 +175,8 @@ class StandardCalculator : AppCompatActivity() {
 
     private fun toggleLastNumberSign(expression: String): String {
         if (expression.isEmpty()) return expression
-
-        val regex = Regex("[-]?\\b\\d+\\.?\\d*\\)?$")
+        // Regex to find the last number with optional sign and considering its operation context.
+        val regex = Regex("""(?<=^|[\+\-\*/])(-?\d+\.?\d*)$""")
         val matchResult = regex.find(expression)
 
         matchResult ?: return expression
@@ -187,6 +191,15 @@ class StandardCalculator : AppCompatActivity() {
             "-$number"
         }
 
-        return expression.substring(0, numberStartIndex) + newNumber + expression.substring(numberEndIndex + 1)
+        val expressionBeforeNumber = expression.substring(0, numberStartIndex)
+        val expressionAfterNumber = expression.substring(numberEndIndex + 1)
+
+        if (expressionBeforeNumber.endsWith("-") && newNumber.startsWith("-")) {
+            return expressionBeforeNumber.dropLast(1) + "+" + newNumber.drop(1) + expressionAfterNumber
+        } else if (expressionBeforeNumber.endsWith("+") && newNumber.startsWith("-")) {
+            return expressionBeforeNumber + newNumber + expressionAfterNumber
+        } else {
+            return expressionBeforeNumber + newNumber + expressionAfterNumber
+        }
     }
 }

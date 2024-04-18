@@ -270,13 +270,19 @@ class AdvancedCalculator : AppCompatActivity() {
                         } else {
                             solution.text = "$currentText$buttonText"
                         }
-                    } else if (buttonText == ".") {
+                    }else if (buttonText == ".") {
                         if (currentText.isEmpty() || currentText.endsWith("(") || currentText.endsWith("+") || currentText.endsWith("-") || currentText.endsWith("*") || currentText.endsWith("/")) {
                             solution.text = "${currentText}0."
-                        } else if (!currentText.contains(".")) {
-                            solution.text = "${currentText}."
+                        } else {
+                            val lastNumberSegment = currentText.split(Regex("[+\\-*/]")).last()
+
+                            // Sprawdź, czy ostatni segment liczby zawiera już kropkę
+                            if (!lastNumberSegment.contains(".")) {
+                                solution.text = "${currentText}."
+                            }
                         }
-                    } else {
+                    }
+                    else {
                         if (currentText == "0") {
                             if (buttonText != "0") {
                                 solution.text = buttonText
@@ -329,8 +335,8 @@ class AdvancedCalculator : AppCompatActivity() {
 
     private fun toggleLastNumberSign(expression: String): String {
         if (expression.isEmpty()) return expression
-
-        val regex = Regex("[-]?\\b\\d+\\.?\\d*\\)?$")
+        // Regex to find the last number with optional sign and considering its operation context.
+        val regex = Regex("""(?<=^|[\+\-\*/])(-?\d+\.?\d*)$""")
         val matchResult = regex.find(expression)
 
         matchResult ?: return expression
@@ -339,12 +345,23 @@ class AdvancedCalculator : AppCompatActivity() {
         val numberStartIndex = matchResult.range.first
         val numberEndIndex = matchResult.range.last
 
+        // Preparing the new number with toggled sign.
         val newNumber = if (number.startsWith("-")) {
-            number.substring(1)
+            number.substring(1)  // Remove negative sign if exists.
         } else {
             "-$number"
         }
 
-        return expression.substring(0, numberStartIndex) + newNumber + expression.substring(numberEndIndex + 1)
+        val expressionBeforeNumber = expression.substring(0, numberStartIndex)
+        val expressionAfterNumber = expression.substring(numberEndIndex + 1)
+
+        // Correcting double negatives into a positive if applicable.
+        if (expressionBeforeNumber.endsWith("-") && newNumber.startsWith("-")) {
+            return expressionBeforeNumber.dropLast(1) + "+" + newNumber.drop(1) + expressionAfterNumber
+        } else if (expressionBeforeNumber.endsWith("+") && newNumber.startsWith("-")) {
+            return expressionBeforeNumber + newNumber + expressionAfterNumber
+        } else {
+            return expressionBeforeNumber + newNumber + expressionAfterNumber
+        }
     }
 }
